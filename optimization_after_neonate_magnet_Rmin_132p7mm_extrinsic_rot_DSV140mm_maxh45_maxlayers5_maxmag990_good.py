@@ -78,19 +78,19 @@ class MultiObjectiveMixedVariableProblem(ElementwiseProblem):
 
     def __init__(self, **kwargs):
         
-        # variables = dict()
-        # variables["layers"] = Integer(bounds=(1, 5))
-        # variables["zpositions"] = Integer(bounds=(2, 20))
-        # variables["mags_zero_pos"]=Integer(bounds=(np.array([8,8,8,8,8]), np.array([24,24,24,24,24])))
-        # variables["increment_z_positions"]=Real(bounds=(np.sqrt(3)*12.7*np.ones((100,1)), np.sqrt(3)*12.7*4*np.ones((100,1))))
-        # variables["number_mags_per_ring"] = Integer(bounds=(8*np.ones((100,1)), 24*np.ones((100,1))))
+        variables = dict()
+        variables["layers"] = Integer(bounds=(1, 5))
+        variables["zpositions"] = Integer(bounds=(2, 20))
+        variables["mags_zero_pos"]=Integer(bounds=(np.array([8,8,8,8,8]), np.array([24,24,24,24,24])))
+        variables["increment_z_positions"]=Real(bounds=(np.sqrt(3)*12.7*np.ones((100,1)), np.sqrt(3)*12.7*4*np.ones((100,1))))
+        variables["number_mags_per_ring"] = Integer(bounds=(8*np.ones((100,1)), 24*np.ones((100,1))))
         self.maxzpos = int(60)
         self.maxlayers = int(5)
         self.increment = int(self.maxzpos*self.maxlayers)
         
         self.cube_side_length = 25.4/2
         self.maxzextent = 1000
-        self.maxnumberofmagnets = 990
+        self.maxnumberofmagnets = 10 #990
         self.rmin=132.7
         self.dr=np.sqrt(3)*self.cube_side_length+3
         
@@ -143,11 +143,11 @@ class MultiObjectiveMixedVariableProblem(ElementwiseProblem):
         num_mags_matrix=np.array([x[f"x{k:02}"] for k in range(8+self.increment, 8+self.increment*2)]).reshape((self.increment,1)).astype(int).flatten()
         placement_ring_decision=np.array([x[f"x{k:02}"] for k in range(8+self.increment*2, 8+self.increment*3)]).reshape((self.increment,1)).astype(int).flatten()
         phase_diff_mat=np.array([x[f"x{k:02}"] for k in range(8+self.increment*3, 8+self.increment*4)]).reshape((self.increment,1)).flatten()
-        # print(layers.shape)
-        # print(zpositions.shape)
-        # print(mags_per_endring_zero_pos.shape)
-        # print(increment_z_matrix.shape)
-        # print(num_mags_matrix.shape)
+        print(layers.shape)
+        print(zpositions.shape)
+        print(mags_per_endring_zero_pos.shape)
+        print(increment_z_matrix.shape)
+        print(num_mags_matrix.shape)
         #constants
         
         increment_z_matrix=increment_z_matrix.reshape((self.maxlayers,self.maxzpos))
@@ -330,7 +330,7 @@ eta, meanB0, col_magnet, B = magsimulator.simulate_ledger(magnets,col_sensors,[1
 print('mean B0='+str(round(meanB0,3)) +  ' homogeneity=' + str(round(eta,3)))
 
 magsimulator.plot_magnets3D(ledger)
-# ledger.to_excel(filename, index=False)
+ledger.to_excel(filename, index=False)
 
 print(ledger['X-pos'].max())
 print(ledger['X-pos'].min())
@@ -339,5 +339,5 @@ print(ledger['Y-pos'].min())
 print(ledger['Z-pos'].max())
 print(ledger['Z-pos'].min())
 
-# magcadexporter.export_magnet_ledger_to_cad(xlsfilename, templatefile)
+magcadexporter.export_magnet_ledger_to_cad(xlsfilename, templatefile)
 data = magsimulator.extract_3Dfields(col_magnet,xmin=-80,xmax=80,ymin=-80,ymax=80,zmin=-80, zmax=80, numberpoints_per_ax = 81,filename='optimization_after_neonate_magnet_Rmin_132p7mm_extrinsic_rot_DSV140mm_maxh60_maxlayers6_maxmag990_2_fields.pkl',plotting=True,Bcomponent=0)
